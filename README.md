@@ -1,3 +1,15 @@
+# GitHub NavEase
+Is a extension made to easy the navigation througt repositories.
+It also displays the repos that you are the author separated from the
+repos you are not the author. Both organized alphabeticaly.
+After creating the personal acess token, insert it to the extension and 
+go to a differente github page and open the extension again.
+While already functional, GitHub NavEase is constantly evolving with 
+ongoing improvements planned for the future. 
+
+# Contributing
+GitHub NavEase is an open-source project, and contributions are welcome. Whether you're interested in adding new features, fixing bugs, or improving documentation, your contributions are invaluable. Feel free to fork the repository, make your changes, and submit a pull request.
+
 # Development
 
 1. Run `pnpm install` to  install dependencies
