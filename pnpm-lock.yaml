@@ -44,8 +44,8 @@ devDependencies:
     specifier: 19.2.2
     version: 19.2.2(@types/node@20.12.7)(typescript@5.3.3)
   '@commitlint/config-conventional':
-    specifier: 18.1.0
-    version: 18.1.0
+    specifier: 19.2.2
+    version: 19.2.2
   '@rollup/plugin-typescript':
     specifier: 11.1.5
     version: 11.1.5(rollup@4.3.0)(tslib@2.6.2)(typescript@5.3.3)
@@ -441,10 +441,11 @@ packages:
       - typescript
     dev: true
 
-  /@commitlint/config-conventional@18.1.0:
-    resolution: {integrity: sha512-8vvvtV3GOLEMHeKc8PjRL1lfP1Y4B6BG0WroFd9PJeRiOc3nFX1J0wlJenLURzl9Qus6YXVGWf+a/ZlbCKT3AA==}
+  /@commitlint/config-conventional@19.2.2:
+    resolution: {integrity: sha512-mLXjsxUVLYEGgzbxbxicGPggDuyWNkf25Ht23owXIH+zV2pv1eJuzLK3t1gDY5Gp6pxdE60jZnWUY5cvgL3ufw==}
     engines: {node: '>=v18'}
     dependencies:
+      '@commitlint/types': 19.0.3
       conventional-changelog-conventionalcommits: 7.0.2
     dev: true
 
