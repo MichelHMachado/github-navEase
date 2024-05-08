@@ -53,7 +53,8 @@ export async function fetchOrgRepositories(apiKey: string) {
 
 export async function getAllRepos(apiKey: string) {
   if (!apiKey) {
-    throw new Error('API key is undefined getAllRepos');
+    console.warn('API key is not available');
+    return null;
   }
   try {
     const [userRepos, orgRepos] = await Promise.all([fetchRepositories(apiKey), fetchOrgRepositories(apiKey)]);

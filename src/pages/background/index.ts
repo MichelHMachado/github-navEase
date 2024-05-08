@@ -31,6 +31,15 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
 });
 
 chrome.runtime.onMessage.addListener(message => {
+  if (message.type === 'POPUP_OPEN' && !message.dataReceived) {
+    chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+      const tabId = tabs[0].id;
+      chrome.tabs.sendMessage(tabId, { type: 'REQUEST_REPOSITORIES_DATA', dataReceived: message.dataReceived });
+    });
+  }
+});
+
+chrome.runtime.onMessage.addListener(message => {
   if (message.type === 'NEW_URL') {
     chrome.tabs.update({ url: message.newUrl });
   } else if (message.type === 'NEW_DATA') {
@@ -38,7 +47,7 @@ chrome.runtime.onMessage.addListener(message => {
       dataChanged: message.dataChanged,
     };
     sendMessage('SEND_NEW_DATA', { obj });
-  } else if (message.type === 'POPUP_OPEN') {
-    chrome.tabs.sendMessage(activeTab.id, { type: 'POPUP_OPEN' });
-  } 
+  } else if (message.type === 'REPOSITORIES_DATA') {
+    chrome.runtime.sendMessage({ type: 'REPOSITORIES_DATA_POPUP', data: message.data, userId: message.userId });
+  }
 });
