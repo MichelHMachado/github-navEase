@@ -1,6 +1,6 @@
 export { getCurrentTabUId, getCurrentTabUrl } from './getter';
 export { sendMessage } from './sendMessage';
-export { sendCtrlSCommand } from './sendCtrlSCommand';
+
 export {
   fetchRepositories,
   getAuthenticatedUser,
@@ -8,4 +8,3 @@ export {
   getAllRepos,
   getAuthenticatedUserOrgs,
 } from './github_api';
-export { updateData } from './updateData';
