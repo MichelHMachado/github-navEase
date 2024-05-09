@@ -31,7 +31,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
 });
 
 chrome.runtime.onMessage.addListener(message => {
-  if (message.type === 'POPUP_OPEN' && !message.dataReceived) {
+  if (message.type === 'REQUEST_DATA' && !message.dataReceived) {
     chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
       const tabId = tabs[0].id;
       chrome.tabs.sendMessage(tabId, { type: 'REQUEST_REPOSITORIES_DATA', dataReceived: message.dataReceived });
