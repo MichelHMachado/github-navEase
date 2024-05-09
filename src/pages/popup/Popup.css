@@ -34,7 +34,7 @@
 
 .App-container__title {
   color: white;
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 500;
   margin: 16px 0;
 }
@@ -116,27 +116,30 @@
   font-weight: 600;
 }
 
-.delete-button {
+.button {
   margin-top: 32px;
   width: 170px;
   height: 50px;
   cursor: pointer;
   display: flex;
   align-items: center;
-  background: red;
   border: none;
   border-radius: 5px;
   box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.15);
   background: #e62222;
 }
 
-.delete-button,
-.delete-button-icon,
-.delete-button-text {
+.button.is--green {
+  background: #026307;
+}
+
+.button,
+.button-icon,
+.button-text {
   transition: 200ms;
 }
 
-.delete-button-icon {
+.button-icon {
   position: absolute;
   border-left: 1px solid #c41b1b;
   transform: translateX(130px);
@@ -147,35 +150,43 @@
   justify-content: center;
 }
 
-.delete-button-text {
+.button.is--green .button-icon {
+  border-left: 1px solid #015607;
+}
+
+.button-text {
   transform: translateX(35px);
   color: white;
   font-weight: bold;
 }
 
-.delete-button-icon svg {
+.button-icon svg {
   width: 15px;
   fill: #eee;
 }
 
-.delete-button:hover {
+.button:hover {
   background: #ff3636;
 }
 
-.delete-button:hover .delete-button-text {
+.button.is--green:hover {
+  background: #04b50d;
+}
+
+.button:hover .button-text {
   color: transparent;
 }
 
-.delete-button:hover .delete-button-icon {
+.button:hover .button-icon {
   width: 150px;
   border-left: none;
   transform: translateX(10px);
 }
 
-.delete-button:focus {
+.button:focus {
   outline: none;
 }
 
-.delete-button:active .delete-button-icon svg {
+.button:active .button-icon svg {
   transform: scale(0.8);
 }

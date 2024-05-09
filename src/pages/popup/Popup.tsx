@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 
 import logo from '../../assets/img/icon-128.png';
+import checkIcon from '../../assets/img/check-svgrepo-com.svg';
+import close from '../../assets/img/close.svg';
 import './Popup.css';
 import '../../globals.css';
 import { getCurrentTab } from '../background';
@@ -8,6 +10,7 @@ import Loader from './components/loader/Loader';
 import { sendMessage } from '../content/injected/utils';
 import RepositoryList from './components/repository-list/RepositoryList';
 import ApiKeyInput from './components/api-key-input/ApiKeyInput';
+import Button from './components/button/Button';
 
 const Popup: React.FC = () => {
   const [repositories, setRepositories] = useState([]);
@@ -32,12 +35,11 @@ const Popup: React.FC = () => {
         setDataReceived(true);
         setLoading(false);
       } else {
-        sendMessage('POPUP_OPEN', { dataReceived });
+        sendMessage('REQUEST_DATA', { dataReceived });
       }
     });
 
-    if (!dataReceived && apiKey) {
-      console.log('dataReceived: ', dataReceived);
+    if (!dataReceived) {
       chrome.runtime.onMessage.addListener(message => {
         if (message.type === 'REPOSITORIES_DATA_POPUP') {
           setRepositories(message.data);
@@ -51,8 +53,8 @@ const Popup: React.FC = () => {
     chrome.storage.local.get(['apiKey'], result => {
       setApiKey(result.apiKey);
     });
-    sendMessage('POPUP_OPEN', { dataReceived });
-  });
+    sendMessage('REQUEST_DATA', { dataReceived });
+  }, [dataReceived]);
 
   const saveApiKey = (key: string) => {
     setApiKey(key);
@@ -71,14 +73,19 @@ const Popup: React.FC = () => {
     });
   };
 
+  const updateData = () => {
+    setLoading(true);
+    setDataReceived(false);
+    chrome.storage.local.set({ repositoriesData: '', userId: '' });
+    sendMessage('REQUEST_DATA', { dataReceived: false });
+  };
+
   const otherRepositories = repositories
     ?.filter(repo => repo.owner.id !== userId)
     .sort((a, b) => a.name.localeCompare(b.name));
   const userRepositories = repositories
     ?.filter(repo => repo.owner.id === userId)
     .sort((a, b) => a.name.localeCompare(b.name));
-
-  console.log('repositories', repositories);
 
   return isGitHubPage ? (
     apiKey ? (
@@ -107,14 +114,10 @@ const Popup: React.FC = () => {
                 />
               </div>
             </div>
-            <button className="delete-button" onClick={deleteApiKey}>
-              <span className="delete-button-text">Delete API Key</span>
-              <span className="delete-button-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                  <path d="M24 20.188l-8.315-8.209 8.2-8.282-3.697-3.697-8.212 8.318-8.31-8.203-3.666 3.666 8.321 8.24-8.206 8.313 3.666 3.666 8.237-8.318 8.285 8.203z"></path>
-                </svg>
-              </span>
-            </button>
+            <div className="flex gap-6">
+              <Button onClick={updateData} text={'Update Data'} icon={checkIcon} buttonClass="is--green" />
+              <Button icon={close} onClick={deleteApiKey} text="Delete Api Key" />
+            </div>
           </>
         )}
       </div>
