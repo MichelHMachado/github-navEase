@@ -11,7 +11,7 @@ function getParameterByName(name, url = window.location.href) {
 const code = getParameterByName('code');
 if (code) {
   // Construct the URL to open your extension's popup
-  const extensionURL = `chrome-extension://${chrome.runtime.id}/src/pages/popup/Popup.tsx?code=${code}`;
+  const extensionURL = `chrome-extension://ehbcamibddhfmmalbpcbhkdmkcknlndc/src/pages/popup/Popup.tsx?code=${code}`;
 
   // Redirect to the extension popup
   window.location.href = extensionURL;
