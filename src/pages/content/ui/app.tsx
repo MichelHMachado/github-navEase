@@ -3,5 +3,5 @@ import { useEffect } from 'react';
 export default function App() {
   useEffect(() => {}, []);
 
-  return null;
+  return <h1>Hello World</h1>;
 }

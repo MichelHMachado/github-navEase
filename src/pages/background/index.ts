@@ -1,10 +1,11 @@
 import reloadOnUpdate from 'virtual:reload-on-update-in-background-script';
 import 'webextension-polyfill';
-import { sendMessage } from '../content/injected/utils';
+import { sendMessage } from '../utils';
+import { exchangeCodeForToken } from '../utils/getUserToken';
 
 reloadOnUpdate('pages/background');
 
-let activeTab: chrome.tabs.Tab | undefined;
+/* let activeTab: chrome.tabs.Tab | undefined; */
 
 type TabCallback = (tab: chrome.tabs.Tab | undefined) => void;
 
@@ -18,7 +19,7 @@ export async function getCurrentTab(callback: TabCallback) {
   });
 }
 
-chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
+/* chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
   if (changeInfo.status === 'complete') {
     getCurrentTab(currentTab => {
       activeTab = currentTab;
@@ -28,23 +29,45 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
       });
     });
   }
-});
+}); */
 
 chrome.runtime.onMessage.addListener(message => {
+  if (message.type === 'oauth') {
+    console.log('Receiving message from oauth.html on the background: ', message);
+    const url = new URL(message.url);
+    const code = url.searchParams.get('code');
+
+    if (code) {
+      exchangeCodeForToken(code)
+        .then(accessToken => {
+          chrome.storage.local.set({ accessToken: accessToken }, () => {
+            console.log('Access token saved:', accessToken);
+          });
+          if (accessToken) {
+            console.log('Sending message with the token: ', message.accessToken);
+            sendMessage('SENDING_ACCESS_TOKEN', { accessToken: accessToken });
+          }
+        })
+        .catch(error => {
+          console.error('Error exchanging code for token:', error);
+        });
+    } else {
+      console.error('OAuth error: Code not found in URL');
+    }
+  }
   if (message.type === 'REQUEST_DATA' && !message.dataReceived) {
-    console.log('REQUEST_DATA on background: ', message);
-    chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
-      const tabId = tabs[0].id;
-      chrome.tabs.sendMessage(tabId, {
-        type: 'REQUEST_REPOSITORIES_DATA',
-        dataReceived: message.dataReceived,
-        apiKey: message.apiKey,
-      });
+    getCurrentTab(tab => {
+      if (tab) {
+        chrome.tabs.sendMessage(tab.id, {
+          type: 'REQUEST_REPOSITORIES_DATA',
+          dataReceived: message.dataReceived,
+          accessToken: message.accessToken,
+        });
+      } else {
+        console.error('Unable to get current tab.');
+      }
     });
   }
-});
-
-chrome.runtime.onMessage.addListener(message => {
   if (message.type === 'NEW_URL') {
     chrome.tabs.update({ url: message.newUrl });
   } else if (message.type === 'NEW_DATA') {

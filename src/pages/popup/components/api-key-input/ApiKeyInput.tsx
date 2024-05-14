@@ -21,7 +21,7 @@ const ApiKeyInput: React.FC<ApiKeyInputProps> = ({ saveApiKey }) => {
   };
 
   return (
-    <div className="p-4 flex flex-col gap-2 ">
+    <div className="p-4 flex flex-col gap-2 bg-white">
       <h1 className="text-lg text-center">Please provide your GitHub Personal access token:</h1>
       <div>
         <h2>Required Permissions: </h2>

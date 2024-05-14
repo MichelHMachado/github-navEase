@@ -1,24 +1,14 @@
-import('@pages/content/injected/utils').then(async ({ getAllRepos, getAuthenticatedUser, sendMessage }) => {
-  let apiKey: string | undefined;
+import('@root/src/pages/utils').then(async ({ getAllRepos, getAuthenticatedUser, sendMessage }) => {
+  let accessToken: string | undefined;
 
   chrome.runtime.onMessage.addListener(async message => {
-    console.log('All messagens on content: ', message);
     if (message.type === 'REQUEST_REPOSITORIES_DATA' && !message.dataReceived) {
-      console.log('REQUEST_REPOSITORIES_DATA: ', message);
-      /* const result = await new Promise<{ apiKey?: string }>((resolve, reject) => {
-        chrome.storage.local.get('apiKey', data => {
-          if (chrome.runtime.lastError) {
-            reject(chrome.runtime.lastError);
-          } else {
-            resolve(data);
-          }
-        });
-      }); */
+      console.log('Received request of data on content: ', message);
 
-      apiKey = message.apiKey;
+      accessToken = message.accessToken;
 
-      const repositoriesData = await getAllRepos(apiKey);
-      const user = await getAuthenticatedUser(apiKey);
+      const repositoriesData = await getAllRepos(accessToken);
+      const user = await getAuthenticatedUser(accessToken);
       const userId = user.id;
       sendMessage('REPOSITORIES_DATA', { data: repositoriesData, userId, dataReceived: message.dataReceived });
     }

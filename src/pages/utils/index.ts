@@ -8,3 +8,5 @@ export {
   getAllRepos,
   getAuthenticatedUserOrgs,
 } from './github_api';
+
+export { getUserToken, exchangeCodeForToken } from './getUserToken';

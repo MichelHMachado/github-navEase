@@ -40,7 +40,7 @@ const RepositoryList: React.FC<{ repositories: Repository[]; title: string; onCl
         {filteredRepositories.map(repo => (
           <li key={repo.id}>
             <button
-              className="text-sm p-2 border-slate-500 border rounded-xl w-full uppercase transition-all duration-300 hover:bg-gray-200 hover:border-gray-300 hover:text-blue-950"
+              className="text-sm p-2 border-slate-500 border rounded-xl w-full uppercase transition-all duration-300 hover:bg-gray-200 hover:border-gray-300 hover:text-black"
               onClick={() => onClick(repo.html_url)}>
               {repo.name}
             </button>

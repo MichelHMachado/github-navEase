@@ -4,28 +4,49 @@ import logo from '../../assets/img/icon-128.png';
 import checkIcon from '../../assets/img/check-svgrepo-com.svg';
 import close from '../../assets/img/close.svg';
 import './Popup.css';
-import '../../globals.css';
+
 import { getCurrentTab } from '../background';
 
-import { sendMessage } from '../content/injected/utils';
+import { sendMessage, getUserToken } from '../utils';
 
 import Loader from './components/loader/Loader';
 import RepositoryList from './components/repository-list/RepositoryList';
 import Button from './components/button/Button';
-import ApiKeyInput from './components/api-key-input/ApiKeyInput';
 
 const Popup: React.FC = () => {
   const [repositories, setRepositories] = useState([]);
   const [userId, setUserId] = useState('');
   const [isGitHubPage, setIsGitHubPage] = useState(false);
-  const [apiKey, setApiKey] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
   const [dataReceived, setDataReceived] = useState(false);
 
   useEffect(() => {
-    setLoading(true);
     getCurrentTab(currentTab => {
-      setIsGitHubPage(currentTab?.url?.includes('github.com') ? true : false);
+      setIsGitHubPage(currentTab?.url?.includes('github.com'));
+    });
+
+    chrome.storage.local.get('accessToken', result => {
+      const accessToken = result.accessToken;
+      if (!accessToken) {
+        try {
+          getUserToken().then(() => {
+            setLoading(false);
+          });
+        } catch (error) {
+          console.log('Failed to get the Token: ', error);
+        }
+
+        chrome.runtime.onMessage.addListener(message => {
+          if (message.type === 'SENDING_ACCESS_TOKEN') {
+            console.log('Message in popup from SENDING_ACCESS_TOKEN: ', message);
+            setAccessToken(message.accessToken);
+          }
+        });
+      } else {
+        setAccessToken(accessToken);
+        setLoading(false);
+      }
     });
   }, []);
 
@@ -37,11 +58,11 @@ const Popup: React.FC = () => {
         setDataReceived(true);
         setLoading(false);
       } else {
-        apiKey && sendMessage('REQUEST_DATA', { dataReceived, apiKey });
+        accessToken && sendMessage('REQUEST_DATA', { dataReceived, accessToken });
       }
     });
 
-    if (!dataReceived && apiKey) {
+    if (!dataReceived && accessToken) {
       chrome.runtime.onMessage.addListener(message => {
         if (message.type === 'REPOSITORIES_DATA_POPUP') {
           chrome.storage.local.set({ repositoriesData: message.data, userId: message.userId });
@@ -52,17 +73,11 @@ const Popup: React.FC = () => {
         }
       });
     }
-    chrome.storage.local.get(['apiKey'], result => {
-      setApiKey(result.apiKey);
-    });
-  }, [apiKey, dataReceived]);
-  const saveApiKey = (key: string) => {
-    setApiKey(key);
-    chrome.storage.local.set({ apiKey: key });
-  };
-  const deleteApiKey = () => {
-    setApiKey(null);
-    chrome.storage.local.remove(['repositoriesData', 'apiKey', 'userId']);
+  }, [accessToken, dataReceived]);
+
+  const deleteAccessToken = () => {
+    setAccessToken(null);
+    chrome.storage.local.remove(['repositoriesData', 'accessToken', 'userId']);
   };
 
   const goToPageById = (repoUrl: string) => {
@@ -76,7 +91,7 @@ const Popup: React.FC = () => {
     setLoading(true);
     setDataReceived(false);
     chrome.storage.local.remove(['repositoriesData', 'userId']);
-    sendMessage('REQUEST_DATA', { dataReceived: false, apiKey });
+    sendMessage('REQUEST_DATA', { dataReceived: false, accessToken });
   };
 
   const otherRepositories = repositories
@@ -87,7 +102,7 @@ const Popup: React.FC = () => {
     .sort((a, b) => a.name.localeCompare(b.name));
 
   return isGitHubPage ? (
-    apiKey ? (
+    accessToken ? (
       <div className="App">
         {loading ? (
           <Loader />
@@ -115,13 +130,13 @@ const Popup: React.FC = () => {
             </div>
             <div className="flex gap-6">
               <Button onClick={updateData} text={'Update Data'} icon={checkIcon} buttonClass="is--green" />
-              <Button icon={close} onClick={deleteApiKey} text="Delete Api Key" />
+              <Button icon={close} onClick={deleteAccessToken} text="Delete Token" />
             </div>
           </>
         )}
       </div>
     ) : (
-      <ApiKeyInput saveApiKey={saveApiKey} />
+      <h1 className="warning-text">Please authenticate with GitHub!</h1>
     )
   ) : (
     <h1 className="warning-text">This is not a GitHub page!</h1>
