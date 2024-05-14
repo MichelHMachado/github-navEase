@@ -2,8 +2,10 @@ import('@pages/content/injected/utils').then(async ({ getAllRepos, getAuthentica
   let apiKey: string | undefined;
 
   chrome.runtime.onMessage.addListener(async message => {
+    console.log('All messagens on content: ', message);
     if (message.type === 'REQUEST_REPOSITORIES_DATA' && !message.dataReceived) {
-      const result = await new Promise<{ apiKey?: string }>((resolve, reject) => {
+      console.log('REQUEST_REPOSITORIES_DATA: ', message);
+      /* const result = await new Promise<{ apiKey?: string }>((resolve, reject) => {
         chrome.storage.local.get('apiKey', data => {
           if (chrome.runtime.lastError) {
             reject(chrome.runtime.lastError);
@@ -11,9 +13,9 @@ import('@pages/content/injected/utils').then(async ({ getAllRepos, getAuthentica
             resolve(data);
           }
         });
-      });
+      }); */
 
-      apiKey = result.apiKey;
+      apiKey = message.apiKey;
 
       const repositoriesData = await getAllRepos(apiKey);
       const user = await getAuthenticatedUser(apiKey);

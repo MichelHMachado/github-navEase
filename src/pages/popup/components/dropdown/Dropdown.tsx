@@ -21,7 +21,7 @@ const Dropdown: React.FC<DropdownProps> = ({ label, content }) => {
   return (
     <>
       <div
-        className="cursor-pointer flex gap-4"
+        className="cursor-pointer flex gap-2 self-start"
         onClick={toggleDropdown}
         onKeyDown={handleKeyDown}
         role="button"

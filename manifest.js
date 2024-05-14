@@ -12,10 +12,10 @@ const manifest = {
    * if you want to support multiple languages, you can use the following reference
    * https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Internationalization
    */
-  name: 'GitHub NavEase',
+  name: 'GitHub NavEase 2.0',
   version: packageJson.version,
-  description: 'Simplify navigation to repositories you have access to but were not the original creator.',
-  permissions: ['storage', 'tabs', 'scripting', 'activeTab'],
+  description: '2.0',
+  permissions: ['storage', 'tabs', 'scripting', 'activeTab', 'identity'],
   background: {
     service_worker: 'src/pages/background/index.js',
     type: 'module',

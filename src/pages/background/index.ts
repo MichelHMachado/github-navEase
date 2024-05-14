@@ -32,9 +32,14 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
 
 chrome.runtime.onMessage.addListener(message => {
   if (message.type === 'REQUEST_DATA' && !message.dataReceived) {
+    console.log('REQUEST_DATA on background: ', message);
     chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
       const tabId = tabs[0].id;
-      chrome.tabs.sendMessage(tabId, { type: 'REQUEST_REPOSITORIES_DATA', dataReceived: message.dataReceived });
+      chrome.tabs.sendMessage(tabId, {
+        type: 'REQUEST_REPOSITORIES_DATA',
+        dataReceived: message.dataReceived,
+        apiKey: message.apiKey,
+      });
     });
   }
 });
