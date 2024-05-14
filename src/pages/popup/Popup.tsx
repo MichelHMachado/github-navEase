@@ -6,11 +6,13 @@ import close from '../../assets/img/close.svg';
 import './Popup.css';
 import '../../globals.css';
 import { getCurrentTab } from '../background';
-import Loader from './components/loader/Loader';
+
 import { sendMessage } from '../content/injected/utils';
+
+import Loader from './components/loader/Loader';
 import RepositoryList from './components/repository-list/RepositoryList';
-import ApiKeyInput from './components/api-key-input/ApiKeyInput';
 import Button from './components/button/Button';
+import ApiKeyInput from './components/api-key-input/ApiKeyInput';
 
 const Popup: React.FC = () => {
   const [repositories, setRepositories] = useState([]);
@@ -35,15 +37,15 @@ const Popup: React.FC = () => {
         setDataReceived(true);
         setLoading(false);
       } else {
-        sendMessage('REQUEST_DATA', { dataReceived });
+        apiKey && sendMessage('REQUEST_DATA', { dataReceived, apiKey });
       }
     });
 
-    if (!dataReceived) {
+    if (!dataReceived && apiKey) {
       chrome.runtime.onMessage.addListener(message => {
         if (message.type === 'REPOSITORIES_DATA_POPUP') {
-          setRepositories(message.data);
           chrome.storage.local.set({ repositoriesData: message.data, userId: message.userId });
+          setRepositories(message.data);
           setUserId(message.userId);
           setLoading(false);
           setDataReceived(true);
@@ -53,14 +55,11 @@ const Popup: React.FC = () => {
     chrome.storage.local.get(['apiKey'], result => {
       setApiKey(result.apiKey);
     });
-    sendMessage('REQUEST_DATA', { dataReceived });
-  }, [dataReceived]);
-
+  }, [apiKey, dataReceived]);
   const saveApiKey = (key: string) => {
     setApiKey(key);
     chrome.storage.local.set({ apiKey: key });
   };
-
   const deleteApiKey = () => {
     setApiKey(null);
     chrome.storage.local.remove(['repositoriesData', 'apiKey', 'userId']);
@@ -76,8 +75,8 @@ const Popup: React.FC = () => {
   const updateData = () => {
     setLoading(true);
     setDataReceived(false);
-    chrome.storage.local.set({ repositoriesData: '', userId: '' });
-    sendMessage('REQUEST_DATA', { dataReceived: false });
+    chrome.storage.local.remove(['repositoriesData', 'userId']);
+    sendMessage('REQUEST_DATA', { dataReceived: false, apiKey });
   };
 
   const otherRepositories = repositories
