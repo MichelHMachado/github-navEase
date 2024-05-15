@@ -14,7 +14,9 @@ if (code) {
   const extensionURL = `chrome-extension://ehbcamibddhfmmalbpcbhkdmkcknlndc/src/pages/popup/Popup.tsx?code=${code}`;
 
   // Redirect to the extension popup
-  window.location.href = extensionURL;
+  setTimeout(() => {
+    window.location.href = extensionURL;
+  }, 2000);
 } else {
   // Handle case where 'code' is not present
   document.body.innerHTML = '<h1>Error: OAuth code not found.</h1>';
