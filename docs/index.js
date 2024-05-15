@@ -12,7 +12,7 @@ const code = getParameterByName('code');
 if (code) {
   alert('Code param found!');
   // Construct the URL to open your extension's popup
-  const extensionURL = `chrome-extension://ehbcamibddhfmmalbpcbhkdmkcknlndc/src/pages/popup/oauth.html?code=${code}`;
+  const extensionURL = `chrome-extension://jnbancflajbgkcepjpaabkhemcpfhekj/src/pages/popup/index.html?code=${code}`;
 
   // Redirect to the extension popup
   setTimeout(() => {

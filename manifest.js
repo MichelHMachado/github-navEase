@@ -1,3 +1,7 @@
+import dotenv from 'dotenv';
+
+dotenv.config();
+
 import fs from 'node:fs';
 const packageJson = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
 
@@ -12,9 +16,9 @@ const manifest = {
    * if you want to support multiple languages, you can use the following reference
    * https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Internationalization
    */
-  name: 'GitHub NavEase 2.0',
+  name: 'GitHub NavEase',
   version: packageJson.version,
-  description: '2.0',
+  description: 'Simplify navigation to repositories you have access to but were not the original creator.',
   permissions: ['storage', 'tabs', 'scripting', 'activeTab', 'identity'],
   background: {
     service_worker: 'src/pages/background/index.js',
@@ -39,10 +43,14 @@ const manifest = {
   ],
   web_accessible_resources: [
     {
-      resources: ['assets/js/*.js', 'assets/css/*.css', 'icon-128.png', 'icon-32.png'],
+      resources: ['assets/js/*.js', 'assets/css/*.css', 'icon-128.png', 'icon-32.png', 'oauth.html'],
       matches: ['*://*/*'],
     },
   ],
+  oauth2: {
+    client_id: process.env.VITE_CLIENT_ID,
+    scopes: ['repo', 'read:org', 'user'],
+  },
 };
 
 export default manifest;
