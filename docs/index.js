@@ -17,7 +17,7 @@ if (code) {
   // Redirect to the extension popup
   setTimeout(() => {
     window.location.href = extensionURL;
-  }, 2000);
+  }, 10000);
 } else {
   // Handle case where 'code' is not present
   document.body.innerHTML = '<h1>Error: OAuth code not found.</h1>';
