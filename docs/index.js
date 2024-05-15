@@ -1,4 +1,4 @@
-/* // Function to get the value of a URL parameter
+// Function to get the value of a URL parameter
 function getParameterByName(name, url = window.location.href) {
   name = name.replace(/[[\]]/g, '\\$&');
   var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
@@ -19,4 +19,3 @@ if (code) {
   // Handle case where 'code' is not present
   document.body.innerHTML = '<h1>Error: OAuth code not found.</h1>';
 }
- */
